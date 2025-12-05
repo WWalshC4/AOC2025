@@ -29,16 +29,21 @@ sections = data.split("\n\n")
 freshIngredientsData = sections[0].splitlines()
 availableIngredients = list(map(int, sections[1].splitlines()))
 
-freshIngredients = set()
+freshIngredients = []
 
 for freshIngredientsDataItem in freshIngredientsData:
     start, end = freshIngredientsDataItem.split("-")
-    freshIngredients.update(range(int(start), int(end) + 1))
+    freshIngredients.append((int(start), int(end)))
+
+sorted(freshIngredients)
 
 freshAvailableIngredients = 0
 
 for availableIngredient in availableIngredients:
-    if availableIngredient in freshIngredients:
-        freshAvailableIngredients += 1
+    for freshIngredient in freshIngredients:
+        if freshIngredient[0] <= availableIngredient:
+            if freshIngredient[1] >= availableIngredient:
+                freshAvailableIngredients += 1
+                break
 
 print(freshAvailableIngredients)
