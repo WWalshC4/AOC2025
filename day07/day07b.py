@@ -27,44 +27,38 @@ test = """.......S.......
 .^.^.^.^.^...^.
 ...............
 """
-# timelines = 40
+# timeLines = 40
 # data = test
 
-timelines = 0
+timeLines = 0
 
 grid = []
 
 lines = data.splitlines()
 
 for line in lines:
-    gridline = list(line)
+    gridline = [0 if char == "." else 1 if char == "S" else char for char in line]
     grid.append(gridline)
+
 
 maxY = len(grid)
 maxX = len(grid[0])
 
-startYPos = 0
-startXPos = grid[startYPos].index("S")
-
-stack = [(startXPos, startYPos)]
-while len(stack) > 0:
-    xPos, yPos = stack.pop()
-    freeTravel = True
-    increment = 0
-    while freeTravel:
-        increment += 1
-        if (yPos + increment) == maxY:
-            timelines += 1
-            freeTravel = False
-        else:
-            nextValue = grid[yPos + increment][xPos]
+for yPos, row in enumerate(grid):
+    for xPos, value in enumerate(row):
+        if value != "^" and value > 0:
+            newX = xPos
+            newY = yPos + 1
+            if newY >= maxY:
+                break
+            nextValue = grid[newY][newX]
             if nextValue == "^":
-                freeTravel = False
-                stack.append((xPos - 1, yPos + increment))
-                stack.append((xPos + 1, yPos + increment))
+                grid[newY][newX - 1] += value
+                grid[newY][newX + 1] += value
+            else:
+                grid[newY][newX] += value
 
 
-# for gridline in grid:
-#    print("".join(gridline))
+timeLines = sum(grid[maxY - 1])
 
-print(timelines)
+print(timeLines)
