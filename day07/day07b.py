@@ -37,35 +37,34 @@ grid = []
 lines = data.splitlines()
 
 for line in lines:
-    line = line.replace("S", "|")
     gridline = list(line)
     grid.append(gridline)
 
 maxY = len(grid)
 maxX = len(grid[0])
 
-for yPos, row in enumerate(grid):
-    timelinesThisRow = 0
-    splittersThisRow = 0
-    for xPos, value in enumerate(row):
-        if value == "^":
-            splittersThisRow += 1
-        if value == "|":
-            timelinesThisRow += 1
-            newX = xPos
-            newY = yPos + 1
-            if newY >= maxY:
-                break
-            nextValue = grid[newY][newX]
-            if nextValue == "^":
-                grid[newY][newX - 1] = "|"
-                grid[newY][newX + 1] = "|"
-            else:
-                grid[newY][newX] = "|"
-    if splittersThisRow > 0:
-        timelines += timelinesThisRow
+startYPos = 0
+startXPos = grid[startYPos].index("S")
 
-for gridline in grid:
-    print("".join(gridline))
+stack = [(startXPos, startYPos)]
+while len(stack) > 0:
+    xPos, yPos = stack.pop()
+    freeTravel = True
+    increment = 0
+    while freeTravel:
+        increment += 1
+        if (yPos + increment) == maxY:
+            timelines += 1
+            freeTravel = False
+        else:
+            nextValue = grid[yPos + increment][xPos]
+            if nextValue == "^":
+                freeTravel = False
+                stack.append((xPos - 1, yPos + increment))
+                stack.append((xPos + 1, yPos + increment))
+
+
+# for gridline in grid:
+#    print("".join(gridline))
 
 print(timelines)
