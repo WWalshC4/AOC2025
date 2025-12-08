@@ -2,6 +2,7 @@
 
 import os
 import math
+import uuid
 from collections import namedtuple
 
 Box = namedtuple("Box", "x y z")
@@ -37,7 +38,12 @@ test = """162,817,812
 425,690,689
 """
 # countOfThreeLargest = 40
-data = test
+# data = test
+
+circuitsToConnect = 1000
+
+if data == test:
+    circuitsToConnect = 10
 
 lines = data.splitlines()
 
@@ -67,31 +73,42 @@ for i in range(len(boxes)):
         info = Distance(distance, boxA, boxB)
         distances.append(info)
 
-distances.sort(key=lambda d: d.distance)
+distances.sort(key=lambda d: d.distance, reverse=True)
 
 circuits = []
+for box in boxes:
+    circuit = set()
+    circuit.add(box)
+    circuits.append(circuit)
 
-for distance in distances:
-    boxA = distance.boxA
-    boxB = distance.boxB
-
+for i in range(circuitsToConnect):
+    nextClosestPair = distances.pop()
+    boxA = nextClosestPair.boxA
+    boxB = nextClosestPair.boxB
     alreadyConnected = False
-    for circuit in circuits:
-        if found:
-            break
-        for circuitDistance in circuit:
-            circuitBoxA = circuitDistance.boxA
-            circuitBoxB = circuitDistance.boxB
-            if (
-                boxA == circuitBoxA
-                or boxA == circuitBoxB
-                or boxB == circuitBoxA
-                or boxB == circuitBoxB
-            ):
-                circuit.append(distance)
-                found = True
-                break
-    if not found:
-        circuits.append([distance])
 
-print(len(circuits[0]))
+    for circuit in circuits:
+        if boxA in circuit and boxB in circuit:
+            alreadyConnected = True
+            break
+    if alreadyConnected:
+        continue
+
+    newCircuit = set()
+    newCircuit.add(boxA)
+    newCircuit.add(boxB)
+    for circuit in circuits:
+        if boxA in circuit:
+            newCircuit.update(circuit)
+            circuit.clear()
+        if boxB in circuit:
+            newCircuit.update(circuit)
+            circuit.clear()
+    circuits.append(newCircuit)
+
+circuits = [circuit for circuit in circuits if circuit != set()]
+circuits.sort(key=lambda circuit: len(circuit), reverse=True)
+
+countOfThreeLargest = len(circuits[0]) * len(circuits[1]) * len(circuits[2])
+
+print(countOfThreeLargest)
