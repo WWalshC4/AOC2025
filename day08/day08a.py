@@ -97,16 +97,22 @@ for i in range(circuitsToConnect):
     newCircuit = set()
     newCircuit.add(boxA)
     newCircuit.add(boxB)
-    for circuit in circuits:
+    foundBoxA = False
+    foundBoxB = False
+    for index in range(len(circuits) - 1, -1, -1):
+        circuit = circuits[index]
         if boxA in circuit:
+            foundBoxA = True
             newCircuit.update(circuit)
-            circuit.clear()
-        if boxB in circuit:
+            del circuits[index]
+        elif boxB in circuit:
+            foundBoxB = True
             newCircuit.update(circuit)
-            circuit.clear()
+            del circuits[index]
+        if foundBoxA and foundBoxB:
+            break
     circuits.append(newCircuit)
 
-circuits = [circuit for circuit in circuits if circuit != set()]
 circuits.sort(key=lambda circuit: len(circuit), reverse=True)
 
 countOfThreeLargest = len(circuits[0]) * len(circuits[1]) * len(circuits[2])
