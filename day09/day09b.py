@@ -68,17 +68,21 @@ for i in range(len(redTiles)):
             greenTiles.append(Point(thisX - (j * delta), thisY))
 
 
-def printVis():
+def printVis(scaleFactor=1):
+
     grid = []
-    for row in range(maxY + 1):
-        column = ["."] * (maxX + 1)
+    for row in range((maxY // scaleFactor) + 1):
+        column = ["."] * ((maxX // scaleFactor) + 1)
         grid.append(column)
 
     for tile in redTiles:
-        grid[tile.y][tile.x] = "0"
+        grid[(tile.y // scaleFactor)][(tile.x // scaleFactor)] = "0"
 
     for tile in greenTiles:
-        grid[tile.y][tile.x] = "o"
+        grid[(tile.y // scaleFactor)][(tile.x // scaleFactor)] = "o"
 
     for row in grid:
         print("".join(row))
+
+
+printVis(1000)
