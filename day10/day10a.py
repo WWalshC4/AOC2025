@@ -2,10 +2,8 @@
 
 import os
 import math
-from collections import namedtuple
 import re
-
-Point = namedtuple("Point", "x y")
+import itertools
 
 try:
     inputFile = open("./input.txt", "r")
@@ -20,8 +18,9 @@ test = """
 [.###.#] (0,1,2,3,4) (0,3,4) (0,1,2,4,5) (1,2) {10,11,11,5,10,5}
 """
 # fewestPresses = 7
-data = test
+# data = test
 
+fewestPresses = 0
 
 pattern = r"\[([\#\.]+)\]([ \(\)\d\,]+)\{([\d,]+)}"
 buttonPattern = r"\(([\d,]+)\)"
@@ -39,3 +38,20 @@ for match in re.finditer(pattern, data):
                 lightsByButton[light] = {}
             lightsByButton[light][buttonIndex] = True
         buttonIndex += 1
+
+    pressRound = 1
+    found = False
+
+    while found == False:
+        for combination in itertools.combinations(buttons, pressRound):
+            checkLights = [False] * len(lights)
+            for buttonToPress in combination:
+                for light in buttonToPress:
+                    checkLights[light] = not (checkLights[light])
+            if checkLights == lights:
+                found = True
+                fewestPresses += pressRound
+                break
+        pressRound += 1
+
+print(fewestPresses)
