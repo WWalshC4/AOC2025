@@ -50,7 +50,8 @@ def visitParents(node):
         for parentNode in deviceConnectionsIn[node]:
             if parentNode == "you":
                 differentPaths += 1
-            visitParents(parentNode)
+            else:
+                visitParents(parentNode)
 
 
 visitParents("out")
